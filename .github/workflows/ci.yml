@@ -1,0 +1,153 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+
+  legacy:
+    name: legacy
+    runs-on: windows-latest
+    steps:
+      - name: Setup go 1.16
+        uses: actions/setup-go@v2
+        with:
+          stable: false
+          go-version: 1.16.0-rc1
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: repo
+      - name: Load Modules
+        run: |
+          go mod download
+          go mod vendor
+        shell: bash
+        working-directory: repo
+      - name: Move packages
+        run: |
+          mkdir -p path
+          mv repo/vendor path/src
+          mkdir -p path/src/github.com/forensicanalysis
+          mv repo path/src/github.com/forensicanalysis/recursivefs
+          cp -r path/src/github.com/forensicanalysis/recursivefs/replace/context path/src
+          # echo "package afero" > path/src/github.com/spf13/afero/memmap.go
+
+          mkdir -p path/src/io path/src/internal
+          cp -r $(go env GOROOT)/src/io/fs path/src/io
+          cp -r $(go env GOROOT)/src/internal/oserror path/src/internal
+          sed -i 's#sort\.Slice(list, func(i, j int) bool { return list\[i]\.Name() < list\[j]\.Name() })#sort.Sort(SortedDir(list))#g' path/src/io/fs/readdir.go
+          echo "type SortedDir []DirEntry" >> path/src/io/fs/readdir.go
+          echo "func (a SortedDir) Len() int           { return len(a) }" >> path/src/io/fs/readdir.go
+          echo "func (a SortedDir) Less(i, j int) bool { return a[i].Name() < a[j].Name() }" >> path/src/io/fs/readdir.go
+          echo "func (a SortedDir) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }" >> path/src/io/fs/readdir.go
+        shell: bash
+      - name: Build with go 1.9.7
+        run: |
+          mkdir -p go1.9.7
+          curl -Lso go1.9.7.windows-amd64.zip https://golang.org/dl/go1.9.7.windows-amd64.zip
+          unzip -q go1.9.7.windows-amd64.zip -d go1.9.7
+          GOPATH=$GITHUB_WORKSPACE/path GOROOT=$GITHUB_WORKSPACE/go1.9.7/go go1.9.7/go/bin/go build github.com/forensicanalysis/recursivefs/...
+        shell: bash
+      - name: Build with go 1.7.6
+        run: |
+          mkdir -p go1.7.6
+          curl -Lso go1.7.6.windows-amd64.zip https://golang.org/dl/go1.7.6.windows-amd64.zip
+          unzip -q go1.7.6.windows-amd64.zip -d go1.7.6
+          GOPATH=$GITHUB_WORKSPACE/path GOROOT=$GITHUB_WORKSPACE/go1.7.6/go go1.7.6/go/bin/go build github.com/forensicanalysis/recursivefs/...
+        shell: bash
+      - name: Build with go 1.5.4
+        run: |
+          mkdir -p go1.5.4
+          curl -Lso go1.5.4.windows-amd64.zip https://golang.org/dl/go1.5.4.windows-amd64.zip
+          unzip -q go1.5.4.windows-amd64.zip -d go1.5.4
+          GOPATH=$GITHUB_WORKSPACE/path GOROOT=$GITHUB_WORKSPACE/go1.5.4/go $GITHUB_WORKSPACE/go1.5.4/go/bin/go build github.com/forensicanalysis/recursivefs/...
+        shell: bash
+      - name: Build with go 1.2.2
+        run: |
+          mkdir -p go1.2.2
+          curl -Lso go1.2.2.windows-amd64.zip https://golang.org/dl/go1.2.2.windows-amd64.zip
+          unzip -q go1.2.2.windows-amd64.zip -d go1.2.2
+          GOPATH=$GITHUB_WORKSPACE/path GOROOT=$GITHUB_WORKSPACE/go1.2.2/go $GITHUB_WORKSPACE/go1.2.2/go/bin/go build github.com/forensicanalysis/recursivefs/...
+        shell: bash
+
+  recursivefs:
+    name: recursivefs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - name: Setup go 1.16
+        uses: actions/setup-go@v2
+        with:
+          stable: false
+          go-version: 1.16.0-rc1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Install golangci-lint & go-acc
+        run: |
+          curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.36.0
+          go get -u github.com/ory/go-acc
+        shell: bash
+
+      - name: Lint
+        run: golangci-lint run --verbose --config .github/.golangci.yml
+        if: matrix.os != 'windows-latest'
+      - name: Lint Windows
+        run: golangci-lint run --verbose --config .github/.golangci.yml --disable gofmt --disable goimports
+        if: matrix.os == 'windows-latest'
+      - name: Test
+        run: go-acc ./...
+        shell: bash
+      - name: Upload coverage
+        env:
+          CI: "true"
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: bash <(curl -s https://codecov.io/bash)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+
+  fs:
+    name: fs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - name: Setup go 1.14
+        uses: actions/setup-go@v2
+        with: {go-version: '1.14'}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with: {node-version: '10.x'}
+      - name: Install bats
+        run: npm install -g bats@1.1.0
+
+      - name: Build
+        run: |
+          go build .
+          go install .
+          mkdir bin
+          mv fs* bin
+        working-directory: ./cmd/fs
+        shell: bash
+      - name: Bats test
+        run: bats test/fs.bats
+        shell: bash
+      - name: Upload
+        uses: actions/upload-artifact@master
+        with:
+          name: fs ${{ matrix.os }}
+          path: cmd/fs/bin

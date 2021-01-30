@@ -1,0 +1,19 @@
+{
+    "extends": [
+        "config:base",
+        ":automergeMinor",
+        ":automergePr"
+    ],
+    "postUpdateOptions": [
+        "gomodTidy"
+    ],
+    "labels": [
+        "Type: Maintenance"
+    ],
+    "assignees": [
+        "cugu"
+    ],
+    "ignoreDeps": [
+        "golang.org/x/sys"
+    ]
+}
