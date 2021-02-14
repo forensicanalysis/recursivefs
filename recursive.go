@@ -36,22 +36,10 @@ import (
 	"github.com/forensicanalysis/fslib/gpt"
 	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/ntfs"
-	"github.com/forensicanalysis/fslib/osfs"
 	"github.com/forensicanalysis/recursivefs/filetype"
 	"github.com/forensicanalysis/zipfs"
-	"github.com/h2non/filetype/types"
 	"github.com/nlepage/go-tarfs"
 )
-
-var supportedTypes = []*filetype.Filetype{
-	filetype.GPT, filetype.MBR,
-	filetype.Tar,
-	filetype.Zip,
-	filetype.Xlsx, filetype.Pptx, filetype.Docx,
-	filetype.FAT16, filetype.NTFS,
-}
-
-var osfsType = &filetype.Filetype{ID: "osfs", Mimetype: types.NewMIME("filesystem/osfs")}
 
 func parseRealPath(fsys fs.FS, sample string) (rpath []element, err error) {
 	parts := strings.Split(sample, "/")
@@ -103,8 +91,6 @@ func childFS(r io.Reader, name string) (fs.FS, error) {
 	_, _ = readSeekerAt.Seek(0, os.SEEK_SET)
 
 	switch t {
-	case osfsType:
-		return osfs.New(), nil
 	case filetype.Zip, filetype.Xlsx, filetype.Pptx, filetype.Docx:
 		zipfsys, err := zipfs.New(readSeekerAt)
 		if err != nil {

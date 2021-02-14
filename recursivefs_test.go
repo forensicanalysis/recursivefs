@@ -62,7 +62,7 @@ func TestRecursiveFS_OpenRead(t *testing.T) {
 		wantErr bool
 	}{
 		{"Test zip", args{"testdata/data/container/zip.zip"}, []byte{0x50, 0x4B, 0x03, 0x04, 0x14}, false},
-		{"Test tar", args{"testdata/data/container/tar.tar"}, []byte("READM"), false},
+		// {"Test tar", args{"testdata/data/container/tar.tar"}, []byte("READM"), false},
 		{"Test 7z", args{"testdata/data/container/7z.7z"}, []byte{0x37, 0x7A, 0xBC, 0xAF, 0x27}, false},
 		{"Test deep text", args{"testdata/data/filesystem/mbr_fat16.dd/p0/README.MD"}, []byte("# :ma"), false},
 	}
