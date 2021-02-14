@@ -79,7 +79,7 @@ func parseRealPath(fsys fs.FS, sample string) (rpath []element, err error) {
 }
 
 // func childFS(fsys fs.FS, name string) (fs.FS, error) {
-func childFS(r io.Reader, name string) (fs.FS, error) {
+func childFS(r io.Reader, name string) (fs.FS, error) { // nolint: gocyclo
 	t, err := filetype.DetectReaderByExtension(r, path.Ext(name))
 	if err != nil && err != io.EOF {
 		return nil, err

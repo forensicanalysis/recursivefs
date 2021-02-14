@@ -82,5 +82,5 @@ func NTFSMatch(buf []byte) bool {
 }
 
 func AFF4Match(buf []byte) bool {
-	return bytes.Compare(buf[:4], []byte{0x50, 0x4b, 0x03, 0x04}) == 0 && bytes.Compare(buf[0x1e:0x1e+21], []byte("container.description")) == 0
+	return bytes.Equal(buf[:4], []byte{0x50, 0x4b, 0x03, 0x04}) && string(buf[0x1e:0x1e+21]) == "container.description"
 }
