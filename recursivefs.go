@@ -26,30 +26,32 @@
 package recursivefs
 
 import (
-	"errors"
 	"fmt"
-	"io/fs"
-	"sort"
-
-	"github.com/forensicanalysis/fslib"
-	"github.com/forensicanalysis/fslib/fsio"
 	"github.com/forensicanalysis/fslib/osfs"
+	"io/fs"
 )
 
 type element struct {
-	Parser string
-	Key    string
+	// Parser *filetype.Filetype
+	FS  fs.FS
+	Key string
 }
 
 // FS implements a read-only meta file system that can access nested file system
 // structures.
-type FS struct{}
+type FS struct {
+	root fs.FS
+}
 
 // New creates a new recursive FS.
-func New() *FS { return &FS{} }
+func New() *FS {
+	return &FS{root: osfs.New()}
+}
 
-// Name returns the filesystem name.
-func (fsys *FS) Name() string { return "RecFS" }
+// New creates a new recursive FS.
+func NewFS(root fs.FS) *FS {
+	return &FS{root: root}
+}
 
 // Open returns a File for the given location.
 func (fsys *FS) Open(name string) (f fs.File, err error) {
@@ -58,32 +60,21 @@ func (fsys *FS) Open(name string) (f fs.File, err error) {
 		return nil, fmt.Errorf("path %s invalid", name)
 	}
 
-	elems, err := parseRealPath(name)
+	elems, err := parseRealPath(fsys.root, name)
 	if err != nil {
 		return
 	}
 
-	var childFS fs.FS = osfs.New()
+	localFS := fsys.root
 	var childName = ""
 	for _, elem := range elems {
-		if f != nil {
-			childFS, err = fsFromName(elem.Parser, f)
-			if err != nil {
-				return nil, err
-			}
-
-			fi, err := f.Stat()
-			if err == nil && fi.IsDir() {
-				f.Close() // nolint: errcheck
-			}
-		}
-
-		f, err = childFS.Open(elem.Key)
+		f, err = elem.FS.Open(elem.Key)
 		if err != nil {
 			return nil, err
 		}
 
 		childName = elem.Key
+		localFS = elem.FS
 	}
 
 	fi, err := f.Stat()
@@ -92,81 +83,18 @@ func (fsys *FS) Open(name string) (f fs.File, err error) {
 	}
 
 	if fi.IsDir() {
-		return &Item{File: f, path: name, recursiveFS: fsys, isFS: false}, nil
+		return &Item{parentFS: localFS, localPath: childName, internal: f}, nil
 	}
 
-	isFS, ifs, err := detectFsFromFile(name, f)
+	subFS, err := childFS(f, childName)
 	if err != nil {
 		return nil, err
 	}
 
-	f, err = reopen(f, childFS, childName)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Item{File: f, path: name, innerFSName: ifs, recursiveFS: fsys, isFS: isFS}, nil
-}
-
-// Stat returns an fs.FileInfo object that describes a file.
-func (fsys *FS) Stat(name string) (fs.FileInfo, error) {
-	f, err := fsys.Open(name)
-	if err != nil {
-		return nil, err
-	}
-	return f.Stat()
-}
-
-// Item describes files and directories in the file system.
-type Item struct {
-	fs.File
-	path        string
-	innerFSName string
-	recursiveFS *FS
-	isFS        bool
-}
-
-// ReadDir returns up to n child items of a directory.
-func (i *Item) ReadDir(n int) (items []fs.DirEntry, err error) {
-	if !i.isFS {
-		items, err = fslib.ReadDir(i.File, n)
-	} else {
-		if readSeekerAtItem, ok := i.File.(fsio.ReadSeekerAt); ok {
-			innerFS, _ := fsFromName(i.innerFSName, readSeekerAtItem)
-			root, _ := innerFS.Open(".")
-			items, err = fslib.ReadDir(root, n)
-		} else {
-			return nil, errors.New("not a file does not implement Seek and ReadAt")
-		}
-	}
-	if err != nil {
-		return nil, fmt.Errorf("could not Readdirnames %#v: %w", i, err)
-	}
-
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].Name() < items[j].Name()
-	})
-
-	return items, nil
-}
-
-// Stat return an fs.FileInfo object that describes a file.
-func (i *Item) Stat() (fs.FileInfo, error) {
-	info, err := i.File.Stat()
-	return &Info{info, i.isFS}, err
-}
-
-// Info wraps the fs.FileInfo.
-type Info struct {
-	fs.FileInfo
-	isFS bool
-}
-
-// IsDir returns if the item is a directory. Returns true for files that are file
-// systems (e.g. zip archives).
-func (m *Info) IsDir() bool {
-	if m.isFS {
-		return true
-	}
-	return m.FileInfo.IsDir()
+	return &Item{
+		parentFS:  localFS,
+		localPath: childName,
+		internal:  f,
+		childFS:   subFS,
+	}, nil
 }
