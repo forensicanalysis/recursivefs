@@ -23,38 +23,44 @@
 package recursivefs
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 
 	"github.com/forensicanalysis/fslib/bufferfs"
-	"github.com/forensicanalysis/zipfs"
-
 	"github.com/forensicanalysis/fslib/fat16"
-	"github.com/forensicanalysis/recursivefs/filetype"
 	"github.com/forensicanalysis/fslib/fsio"
 	"github.com/forensicanalysis/fslib/gpt"
 	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/ntfs"
 	"github.com/forensicanalysis/fslib/osfs"
+	"github.com/forensicanalysis/recursivefs/filetype"
+	"github.com/forensicanalysis/zipfs"
+	"github.com/h2non/filetype/types"
+	"github.com/nlepage/go-tarfs"
 )
 
-func parseRealPath(sample string) (rpath []element, err error) {
+var supportedTypes = []*filetype.Filetype{
+	filetype.GPT, filetype.MBR,
+	filetype.Tar,
+	filetype.Zip,
+	filetype.Xlsx, filetype.Pptx, filetype.Docx,
+	filetype.FAT16, filetype.NTFS,
+}
+
+var osfsType = &filetype.Filetype{ID: "osfs", Mimetype: types.NewMIME("filesystem/osfs")}
+
+func parseRealPath(fsys fs.FS, sample string) (rpath []element, err error) {
 	parts := strings.Split(sample, "/")
 
 	if len(parts) == 0 {
-		return []element{{"", ""}}, nil
+		return []element{{fsys, "."}}, nil
 	}
 
 	key := "."
-	var fsys fs.FS = osfs.New()
-	var fsName = "OsFs"
-	var isFS bool
 	for len(parts) > 0 {
 		key = path.Join(key, parts[0])
 		parts = parts[1:]
@@ -64,109 +70,66 @@ func parseRealPath(sample string) (rpath []element, err error) {
 		}
 
 		if !info.IsDir() {
-			file, err := fsys.Open(key)
+			rpath = append(rpath, element{fsys, key})
+			f, err := fsys.Open(key)
 			if err != nil {
 				return nil, err
 			}
-
-			rpath = append(rpath, element{fsName, key})
-			isFS, fsName, err = detectFsFromFile(path.Ext(key), file)
-			if err != nil {
-				return nil, fmt.Errorf("error detection fsys %s: %w", key, err)
+			cfsys, err := childFS(f, key)
+			if err != nil || cfsys == nil {
+				continue
 			}
-
-			file, err = reopen(file, fsys, key)
-			if err != nil {
-				return nil, err
-			}
-
-			fsys, err = fsFromName(fsName, file)
-			if err != nil {
-				return nil, fmt.Errorf("could not get fsys from name %s: %w", fsName, err)
-			}
-			if !isFS && len(parts) > 0 {
-				return nil, errors.New("could not resolve path")
-			}
+			fsys = cfsys
 
 			key = "."
 		} else if len(parts) == 0 {
-			rpath = append(rpath, element{fsName, key})
+			rpath = append(rpath, element{fsys, key})
 		}
 	}
 	return rpath, nil
 }
 
-func reopen(file fs.File, fsys fs.FS, key string) (fs.File, error) {
-	if seeker, ok := file.(io.Seeker); ok {
-		_, err := seeker.Seek(0, 0)
-		if err == nil {
-			return file, nil
-		}
-	}
-
-	_ = file.Close()
-
-	return fsys.Open(key)
-}
-
-func detectFsFromFile(ext string, base io.Reader) (isFs bool, fs string, err error) {
-	ext = strings.TrimLeft(ext, ".")
-
-	t, err := filetype.DetectReaderByExtension(base, ext)
+// func childFS(fsys fs.FS, name string) (fs.FS, error) {
+func childFS(r io.Reader, name string) (fs.FS, error) {
+	t, err := filetype.DetectReaderByExtension(r, path.Ext(name))
 	if err != nil && err != io.EOF {
-		return
+		return nil, err
 	}
 
-	switch t {
-	case filetype.GPT:
-		fs = "GPT"
-	case filetype.MBR:
-		fs = "MBR"
-	case filetype.Zip, filetype.Xlsx, filetype.Pptx, filetype.Docx:
-		fs = "ZIP"
-	case filetype.FAT16:
-		fs = "FAT16"
-	case filetype.NTFS:
-		fs = "NTFS"
-	default:
-		return false, "", nil
-	}
-	return true, fs, err
-}
-
-func fsFromName(name string, r io.Reader) (fsys fs.FS, err error) {
 	readSeekerAt, ok := r.(fsio.ReadSeekerAt)
 	if !ok {
-		b, err := ioutil.ReadAll(r)
-		if err != nil {
-			return nil, err
-		}
-		readSeekerAt = bytes.NewReader(b)
+		return nil, errors.New("files must be ReadSeekerAt")
 	}
+	_, _ = readSeekerAt.Seek(0, os.SEEK_SET)
 
-	switch name {
-	case "OsFs":
-		fsys = osfs.New()
-	case "ZIP":
-		// size, err := fsio.GetSize(readSeekerAt)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		// fsys, err = zip.NewReader(readSeekerAt, size)
-
+	switch t {
+	case osfsType:
+		return osfs.New(), nil
+	case filetype.Zip, filetype.Xlsx, filetype.Pptx, filetype.Docx:
 		zipfsys, err := zipfs.New(readSeekerAt)
 		if err != nil {
 			return nil, err
 		}
-		fsys = bufferfs.New(zipfsys)
-	case "FAT16":
-		fsys, err = fat16.New(readSeekerAt)
-	case "MBR":
-		fsys, err = mbr.New(readSeekerAt)
-	case "GPT":
-		fsys, err = gpt.New(readSeekerAt)
-	case "NTFS":
-		fsys, err = ntfs.New(readSeekerAt)
+		return bufferfs.New(zipfsys), nil
+	case filetype.Tar:
+		tarfsys, err := tarfs.New(readSeekerAt)
+		if err != nil {
+			return nil, err
+		}
+		return bufferfs.New(tarfsys), nil
+	case filetype.FAT16:
+		return fat16.New(readSeekerAt)
+	case filetype.MBR:
+		return mbr.New(readSeekerAt)
+	case filetype.GPT:
+		return gpt.New(readSeekerAt)
+	case filetype.NTFS:
+		ntfsys, err := ntfs.New(readSeekerAt)
+		if err != nil {
+			return nil, err
+		}
+		return bufferfs.New(ntfsys), nil
+	default:
+		return nil, nil
 	}
-	return fsys, err
 }

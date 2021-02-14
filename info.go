@@ -20,39 +20,58 @@
 //
 // Author(s): Jonas Plum
 
-package recursivefs_test
+package recursivefs
 
 import (
-	"fmt"
-	"io"
-	"log"
-	"os"
-	"path"
-
-	"github.com/forensicanalysis/fslib"
-	"github.com/forensicanalysis/recursivefs"
+	"io/fs"
+	"time"
 )
 
-func Example() {
-	// Read the pdf header from a zip file on an NTFS disk image.
+// Info wraps the fs.FileInfo.
+type Info struct {
+	internal fs.FileInfo
+	isFS     bool
+}
 
-	// parse the file system
-	fsys := recursivefs.New()
+func (m *Info) Type() fs.FileMode {
+	return m.Mode() & fs.ModeType
+}
 
-	// create fslib path
-	wd, _ := os.Getwd()
-	nestedPath := "testdata/data/filesystem/ntfs.dd/document/Computer forensics - Wikipedia.pdf"
-	fpath, _ := fslib.ToForensicPath(path.Join(wd, nestedPath))
+func (m *Info) Info() (fs.FileInfo, error) {
+	return m, nil
+}
 
-	file, err := fsys.Open(fpath)
-	if err != nil {
-		log.Fatal(err)
+func (m *Info) Name() string {
+	return m.internal.Name()
+}
+
+func (m *Info) Size() int64 {
+	return m.internal.Size()
+}
+
+func (m *Info) Mode() fs.FileMode {
+	if m.IsDir() {
+		// return fs.ModeDir
+		return m.internal.Mode() | fs.ModeDir
 	}
+	// return 0
+	return m.internal.Mode()
+}
 
-	// get content
-	content, _ := io.ReadAll(file)
+func (m *Info) ModTime() time.Time {
+	// return time.Date(2020, 1, 1, 12, 12, 12, 12, time.UTC)
+	return m.internal.ModTime()
+}
 
-	// print content
-	fmt.Println(string(content[0:4]))
-	// Outputx: %PDF
+func (m *Info) Sys() interface{} {
+	return m.internal.Sys()
+}
+
+// IsDir returns if the item is a directory. Returns true for files that are file
+// systems (e.g. zip archives).
+func (m *Info) IsDir() bool {
+	if m.isFS {
+		return true
+	}
+	return m.internal.IsDir()
 }

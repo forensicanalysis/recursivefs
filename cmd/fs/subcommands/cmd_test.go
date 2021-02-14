@@ -194,6 +194,7 @@ func Test_tree(t *testing.T) {
 │   ├── Computer forensics - Wikipedia.7z
 │   ├── Computer forensics - Wikipedia.pdf.gz
 │   ├── Computer forensics - Wikipedia.tar
+│   │   └── Computer forensics - Wikipedia.pdf
 │   └── Computer forensics - Wikipedia.zip
 │       └── Computer forensics - Wikipedia.pdf
 ├── document

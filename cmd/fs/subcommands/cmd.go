@@ -211,7 +211,7 @@ func lsCmd(_ *cobra.Command, args []string) {
 	for _, arg := range args {
 		name, err := fslib.ToForensicPath(arg)
 		exitOnError(err)
-		fi, err := recursivefs.New().Stat(name)
+		fi, err := fs.Stat(recursivefs.New(), name)
 		exitOnError(err)
 		if fi.IsDir() {
 			entries, err := fs.ReadDir(fsys, name)
@@ -239,7 +239,7 @@ func statCmd(_ *cobra.Command, args []string) {
 	for _, arg := range args {
 		name, err := fslib.ToForensicPath(arg)
 		exitOnError(err)
-		fi, err := recursivefs.New().Stat(name)
+		fi, err := fs.Stat(recursivefs.New(), name)
 		exitOnError(err)
 		fmt.Printf("Name: %v\n", fi.Name())
 		fmt.Printf("Size: %v\n", fi.Size())
@@ -261,7 +261,7 @@ func treeCmd(_ *cobra.Command, args []string) {
 func getChildren(tree treeprint.Tree, subpath string) {
 	name, err := fslib.ToForensicPath(subpath)
 	exitOnError(err)
-	fi, err := recursivefs.New().Stat(name)
+	fi, err := fs.Stat(recursivefs.New(), name)
 	if err != nil {
 		fmt.Println("tree", err)
 		return
