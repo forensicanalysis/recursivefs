@@ -7,6 +7,6 @@ require (
 	github.com/forensicanalysis/zipfs v0.0.0-20210202205655-81fcfd84e063
 	github.com/h2non/filetype v1.1.1
 	github.com/nlepage/go-tarfs v1.0.4
-	github.com/spf13/cobra v1.1.1
+	github.com/spf13/cobra v1.1.3
 	github.com/xlab/treeprint v1.0.0
 )
