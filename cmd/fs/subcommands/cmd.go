@@ -261,15 +261,14 @@ func treeCmd(_ *cobra.Command, args []string) {
 func getChildren(tree treeprint.Tree, subpath string) {
 	name, err := fslib.ToForensicPath(subpath)
 	exitOnError(err)
-	fi, err := fs.Stat(recursivefs.New(), name)
+	fsys := recursivefs.New()
+	fi, err := fs.Stat(fsys, name)
 	if err != nil {
 		fmt.Println("tree", err)
 		return
 	}
 	exitOnError(err)
 	if fi.IsDir() {
-		fsys := recursivefs.New()
-
 		entries, err := fs.ReadDir(fsys, name)
 		exitOnError(err)
 

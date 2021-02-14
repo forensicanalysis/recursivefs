@@ -36,6 +36,7 @@ import (
 	"github.com/forensicanalysis/fslib/gpt"
 	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/ntfs"
+	"github.com/forensicanalysis/goaff4"
 	"github.com/forensicanalysis/recursivefs/filetype"
 	"github.com/forensicanalysis/zipfs"
 	"github.com/nlepage/go-tarfs"
@@ -115,6 +116,16 @@ func childFS(r io.Reader, name string) (fs.FS, error) {
 			return nil, err
 		}
 		return bufferfs.New(ntfsys), nil
+	case filetype.AFF4:
+		size, err := fsio.GetSize(readSeekerAt)
+		if err != nil {
+			return nil, err
+		}
+		aff4fs, err := goaff4.New(readSeekerAt, size)
+		if err != nil {
+			return nil, err
+		}
+		return bufferfs.New(aff4fs), nil
 	default:
 		return nil, nil
 	}

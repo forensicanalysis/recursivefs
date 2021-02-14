@@ -22,9 +22,12 @@
 
 package filetype
 
-import "github.com/h2non/filetype/types"
+import (
+	"bytes"
+	"github.com/h2non/filetype/types"
+)
 
-var filesystemTypes = []*Filetype{MBR, GPT, FAT16, HFSPlus, ExFAT, NTFS}
+var filesystemTypes = []*Filetype{MBR, GPT, FAT16, HFSPlus, ExFAT, NTFS, AFF4}
 
 var (
 	// MBR is the file type for the MBR partition system.
@@ -39,6 +42,9 @@ var (
 	ExFAT = &Filetype{"exfat", types.NewMIME("filesystem/exfat"), []string{"dd"}, ExFATMatch, 0}
 	// NTFS is the file type for the NTFS file system.
 	NTFS = &Filetype{"ntfs", types.NewMIME("filesystem/ntfs"), []string{"dd"}, NTFSMatch, 0}
+
+	// AFF4 is the file type for the AFF4 forensic image format.
+	AFF4 = &Filetype{"aff4", types.NewMIME("filesystem/aff4"), []string{"aff4"}, AFF4Match, 0}
 )
 
 // MBRMatch checks if the buffer matches a signature for MBR file systems.
@@ -73,4 +79,8 @@ func ExFATMatch(buf []byte) bool {
 // NTFSMatch checks if the buffer matches a signature for NTFS file systems.
 func NTFSMatch(buf []byte) bool {
 	return len(buf) >= 7 && buf[3] == 'N' && buf[4] == 'T' && buf[5] == 'F' && buf[6] == 'S'
+}
+
+func AFF4Match(buf []byte) bool {
+	return bytes.Compare(buf[:4], []byte{0x50, 0x4b, 0x03, 0x04}) == 0 && bytes.Compare(buf[0x1e:0x1e+21], []byte("container.description")) == 0
 }
