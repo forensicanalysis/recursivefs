@@ -91,42 +91,33 @@ func childFS(r io.Reader, name string) (fs.FS, error) { // nolint: gocyclo
 	}
 	_, _ = readSeekerAt.Seek(0, os.SEEK_SET)
 
+	var fsys fs.FS
 	switch t {
 	case filetype.Zip, filetype.Xlsx, filetype.Pptx, filetype.Docx:
-		zipfsys, err := zipfs.New(readSeekerAt)
-		if err != nil {
-			return nil, err
-		}
-		return bufferfs.New(zipfsys), nil
+		fsys, err = zipfs.New(readSeekerAt)
 	case filetype.Tar:
-		tarfsys, err := tarfs.New(readSeekerAt)
-		if err != nil {
-			return nil, err
-		}
-		return bufferfs.New(tarfsys), nil
+		fsys, err = tarfs.New(readSeekerAt)
 	case filetype.FAT16:
 		return fat16.New(readSeekerAt)
 	case filetype.MBR:
-		return mbr.New(readSeekerAt)
+		fsys, err = mbr.New(readSeekerAt)
 	case filetype.GPT:
 		return gpt.New(readSeekerAt)
 	case filetype.NTFS:
-		ntfsys, err := ntfs.New(readSeekerAt)
-		if err != nil {
-			return nil, err
-		}
-		return bufferfs.New(ntfsys), nil
+		fsys, err = ntfs.New(readSeekerAt)
 	case filetype.AFF4:
-		size, err := fsio.GetSize(readSeekerAt)
+		var size int64
+		size, err = fsio.GetSize(readSeekerAt)
 		if err != nil {
 			return nil, err
 		}
-		aff4fs, err := goaff4.New(readSeekerAt, size)
-		if err != nil {
-			return nil, err
-		}
-		return bufferfs.New(aff4fs), nil
+		fsys, err = goaff4.New(readSeekerAt, size)
 	default:
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	return bufferfs.New(fsys), nil
 }

@@ -25,7 +25,7 @@ func main() {
 
 	// create fslib path
 	wd, _ := os.Getwd()
-	fpath, _ := fslib.ToForensicPath(path.Join(wd, "testdata/data/filesystem/ntfs.dd/container/Computer forensics - Wikipedia.zip/Computer forensics - Wikipedia.pdf"))
+	fpath, _ := fslib.ToFSPath(path.Join(wd, "testdata/data/filesystem/ntfs.dd/container/Computer forensics - Wikipedia.zip/Computer forensics - Wikipedia.pdf"))
 
 	// get handle the README.md
 	file, err := fsys.Open(fpath)

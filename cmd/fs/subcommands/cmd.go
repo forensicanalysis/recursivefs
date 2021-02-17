@@ -151,7 +151,7 @@ func exitOnError(err error) {
 func catCmd(_ *cobra.Command, args []string) {
 	for _, arg := range args {
 		func() {
-			name, err := fslib.ToForensicPath(arg)
+			name, err := fslib.ToFSPath(arg)
 			exitOnError(err)
 			r, err := recursivefs.New().Open(name)
 			exitOnError(err)
@@ -167,7 +167,7 @@ func fileCmd(_ *cobra.Command, args []string) {
 	b := make([]byte, 8192)
 	for _, arg := range args {
 		func() {
-			name, err := fslib.ToForensicPath(arg)
+			name, err := fslib.ToFSPath(arg)
 			exitOnError(err)
 			f, err := recursivefs.New().Open(name)
 			exitOnError(err)
@@ -188,7 +188,7 @@ func hashsumCmd(_ *cobra.Command, args []string) {
 		sha512hash := sha512.New()
 		hash := io.MultiWriter(md5hash, sha1hash, sha256hash, sha512hash)
 
-		name, err := fslib.ToForensicPath(arg)
+		name, err := fslib.ToFSPath(arg)
 		exitOnError(err)
 		r, err := recursivefs.New().Open(name)
 		exitOnError(err)
@@ -209,7 +209,7 @@ func lsCmd(_ *cobra.Command, args []string) {
 
 	fsys := recursivefs.New()
 	for _, arg := range args {
-		name, err := fslib.ToForensicPath(arg)
+		name, err := fslib.ToFSPath(arg)
 		exitOnError(err)
 		fi, err := fs.Stat(recursivefs.New(), name)
 		exitOnError(err)
@@ -237,7 +237,7 @@ func lsCmd(_ *cobra.Command, args []string) {
 
 func statCmd(_ *cobra.Command, args []string) {
 	for _, arg := range args {
-		name, err := fslib.ToForensicPath(arg)
+		name, err := fslib.ToFSPath(arg)
 		exitOnError(err)
 		fi, err := fs.Stat(recursivefs.New(), name)
 		exitOnError(err)
@@ -259,7 +259,7 @@ func treeCmd(_ *cobra.Command, args []string) {
 }
 
 func getChildren(tree treeprint.Tree, subpath string) {
-	name, err := fslib.ToForensicPath(subpath)
+	name, err := fslib.ToFSPath(subpath)
 	exitOnError(err)
 	fsys := recursivefs.New()
 	fi, err := fs.Stat(fsys, name)
@@ -269,7 +269,7 @@ func getChildren(tree treeprint.Tree, subpath string) {
 	}
 	exitOnError(err)
 	if fi.IsDir() {
-		entries, err := fs.ReadDir(fsys, name)
+		entries, _ := fs.ReadDir(fsys, name)
 		exitOnError(err)
 
 		for _, entry := range entries {
