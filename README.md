@@ -1,16 +1,13 @@
 <h1 align="center">recursive fs</h1>
 
 <p  align="center">
- <a href="https://github.com/forensicanalysis/recursivefs/actions"><img src="https://github.com/forensicanalysis/recursivefs/workflows/CI/badge.svg" alt="build" /></a>
  <a href="https://codecov.io/gh/forensicanalysis/recursivefs"><img src="https://codecov.io/gh/forensicanalysis/recursivefs/branch/master/graph/badge.svg" alt="coverage" /></a>
- <a href="https://goreportcard.com/report/github.com/forensicanalysis/recursivefs"><img src="https://goreportcard.com/badge/github.com/forensicanalysis/recursivefs" alt="report" /></a>
  <a href="https://godocs.io/github.com/forensicanalysis/recursivefs"><img src="https://godocs.io/github.com/forensicanalysis/recursivefs?status.svg" alt="doc" /></a>
 </p>
 
-This package implements a recursive file system that processes container files according to their file type. 
+A recursive file system that processes container files according to their file type. 
 You can use it e.g. to read a pdf from a zip file on an NTFS disk image (s. below). 
 It also provides the `fs` command line tool do use the functionality from the command line.
-
 recursivefs implements [io/fs.FS](https://tip.golang.org/pkg/io/fs).
 
 
