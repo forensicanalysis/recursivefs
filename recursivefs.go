@@ -27,6 +27,7 @@ package recursivefs
 
 import (
 	"fmt"
+	"github.com/forensicanalysis/fslib/bufferfs"
 	"github.com/forensicanalysis/fslib/osfs"
 	"io/fs"
 )
@@ -45,12 +46,12 @@ type FS struct {
 
 // New creates a new recursive FS.
 func New() *FS {
-	return &FS{root: osfs.New()}
+	return &FS{root: bufferfs.New(osfs.New())}
 }
 
 // New creates a new recursive FS.
 func NewFS(root fs.FS) *FS {
-	return &FS{root: root}
+	return &FS{root: bufferfs.New(root)}
 }
 
 // Open returns a File for the given location.

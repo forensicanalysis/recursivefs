@@ -34,7 +34,6 @@ import (
 	"github.com/forensicanalysis/fslib/bufferfs"
 	"github.com/forensicanalysis/fslib/fat16"
 	fslibtest "github.com/forensicanalysis/fslib/fstest"
-	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/osfs"
 )
 
@@ -69,7 +68,7 @@ func TestRecursiveFS_OpenRead(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := New()
-			name, err := fslib.ToForensicPath(tt.args.name)
+			name, err := fslib.ToFSPath(tt.args.name)
 			if err != nil {
 				t.Error(err)
 				return
@@ -114,7 +113,7 @@ func TestRecursiveFS_OpenDirList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := New()
-			name, err := fslib.ToForensicPath(tt.args.name)
+			name, err := fslib.ToFSPath(tt.args.name)
 			if err != nil {
 				t.Error(err)
 				return
@@ -166,7 +165,7 @@ func TestRecursiveFS_Readdir(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := New()
-			name, err := fslib.ToForensicPath(tt.args.name)
+			name, err := fslib.ToFSPath(tt.args.name)
 			if err != nil {
 				t.Error(err)
 				return
@@ -200,12 +199,12 @@ func TestRecursiveFS_Readdir(t *testing.T) {
 }
 
 func TestParseRealPath(t *testing.T) {
-	zippath, err := fslib.ToForensicPath("testdata/data/container/zip.zip")
+	zippath, err := fslib.ToFSPath("testdata/data/container/zip.zip")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	fatpath, err := fslib.ToForensicPath("testdata/data/filesystem/mbr_fat16.dd")
+	fatpath, err := fslib.ToFSPath("testdata/data/filesystem/mbr_fat16.dd")
 	if err != nil {
 		t.Error(err)
 		return
@@ -221,11 +220,11 @@ func TestParseRealPath(t *testing.T) {
 		wantErr   bool
 	}{
 		{"Test zip", args{"testdata/data/container/zip.zip/image"}, []element{{&osfs.FS{}, zippath}, {&bufferfs.FS{}, "image"}}, false},
-		{"Test fat16", args{"testdata/data/filesystem/mbr_fat16.dd/p0/IMAGE"}, []element{{&osfs.FS{}, fatpath}, {&mbr.FS{}, "p0"}, {&fat16.FS{}, "IMAGE"}}, false},
+		{"Test fat16", args{"testdata/data/filesystem/mbr_fat16.dd/p0/IMAGE"}, []element{{&osfs.FS{}, fatpath}, {&bufferfs.FS{}, "p0"}, {&fat16.FS{}, "IMAGE"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			name, err := fslib.ToForensicPath(tt.args.sample)
+			name, err := fslib.ToFSPath(tt.args.sample)
 			if err != nil {
 				t.Error(err)
 				return

@@ -42,7 +42,7 @@ func Example() {
 	// create fslib path
 	wd, _ := os.Getwd()
 	nestedPath := "testdata/data/filesystem/ntfs.dd/document/Computer forensics - Wikipedia.pdf"
-	fpath, _ := fslib.ToForensicPath(path.Join(wd, nestedPath))
+	fpath, _ := fslib.ToFSPath(path.Join(wd, nestedPath))
 
 	file, err := fsys.Open(fpath)
 	if err != nil {

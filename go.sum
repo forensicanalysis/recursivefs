@@ -45,8 +45,9 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
-github.com/forensicanalysis/fslib v0.14.10-0.20210130143731-88588c4c3f19 h1:40AGU4xW3VYeENbciodjhT+UNIqPpIOZa23u1BfxgQc=
 github.com/forensicanalysis/fslib v0.14.10-0.20210130143731-88588c4c3f19/go.mod h1:Ih/gIc8wQEOGCV6nEGOThSCA2yPCQ7y3McOIM6zoSYE=
+github.com/forensicanalysis/fslib v0.14.10-0.20210217002702-48b6b4bcb61b h1:Abn+SVV9GImi/GstbDgnw+KuneaVQJrJ2WOf6uUjeFw=
+github.com/forensicanalysis/fslib v0.14.10-0.20210217002702-48b6b4bcb61b/go.mod h1:Ih/gIc8wQEOGCV6nEGOThSCA2yPCQ7y3McOIM6zoSYE=
 github.com/forensicanalysis/goaff4 v0.2.1-0.20210214020745-6e31c85f274e h1:XlRSjYqRYy/pwayPCz2f3QNiaP5RE9/LzRqODIzxADU=
 github.com/forensicanalysis/goaff4 v0.2.1-0.20210214020745-6e31c85f274e/go.mod h1:f51BPxErhO0n8niAvsYjjSFIkYKsgGylXp+2nZeI9mQ=
 github.com/forensicanalysis/zipfs v0.0.0-20210202205655-81fcfd84e063 h1:8Updr6SUe+s8PvqP+DhdMXH09s5pZh9hmpYXihPZ144=
