@@ -45,13 +45,12 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
-github.com/forensicanalysis/fslib v0.14.10-0.20210130143731-88588c4c3f19/go.mod h1:Ih/gIc8wQEOGCV6nEGOThSCA2yPCQ7y3McOIM6zoSYE=
 github.com/forensicanalysis/fslib v0.15.0 h1:S0yvtljgeyZSbUYtZOb5nG6G+K29EUa4yfdcqTpiwsM=
 github.com/forensicanalysis/fslib v0.15.0/go.mod h1:Ih/gIc8wQEOGCV6nEGOThSCA2yPCQ7y3McOIM6zoSYE=
 github.com/forensicanalysis/goaff4 v0.3.0 h1:/ri4UYi3FVgkUhu8ZLIFDW4Sh6oc1Kr8eEI0Xn9C9C4=
 github.com/forensicanalysis/goaff4 v0.3.0/go.mod h1:f51BPxErhO0n8niAvsYjjSFIkYKsgGylXp+2nZeI9mQ=
-github.com/forensicanalysis/zipfs v0.0.0-20210218230354-5a93ed326f91 h1:hE/OoEJT4SUw+h/yRxAkrl9eVNPTmM9/rMQvtEjVOyo=
-github.com/forensicanalysis/zipfs v0.0.0-20210218230354-5a93ed326f91/go.mod h1:9qhxoe27T6Truy0Pay3yh3pNRIYVtGWljxlwxPQAWKk=
+github.com/forensicanalysis/zipfs v0.0.0-20210218235450-22f1a433c4a1 h1:bOE/U18mYNOMi9t4qlG0jMzF4raPEzvv/7VEBldizlE=
+github.com/forensicanalysis/zipfs v0.0.0-20210218235450-22f1a433c4a1/go.mod h1:U0/cdLy2NjqS9wE2ndcQF2pQ2QIvv+egjz0YXnS/eLA=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
