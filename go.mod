@@ -9,5 +9,5 @@ require (
 	github.com/h2non/filetype v1.1.1
 	github.com/nlepage/go-tarfs v1.0.4
 	github.com/spf13/cobra v1.1.3
-	github.com/xlab/treeprint v1.0.0
+	github.com/xlab/treeprint v1.1.0
 )
