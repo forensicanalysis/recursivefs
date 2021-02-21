@@ -1,0 +1,46 @@
+project_name: fs
+builds:
+  - dir: cmd/fs
+    binary: fs
+    goos: [ linux, windows, darwin ]
+archives:
+  - replacements:
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+    format_overrides:
+      - goos: windows
+        format: zip
+brews:
+  - tap:
+      owner: forensicanalysis
+      name: homebrew-tap
+    commit_author:
+      name: Jonas Plum
+      email: git@jonasplum.de
+    folder: Formula
+    homepage: "https://github.com/forensicanalysis/recursivefs"
+    description: "A recursive file system viewer."
+    license: "MIT"
+scoop:
+  bucket:
+    owner: forensicanalysis
+    name: homebrew-tap
+  commit_author:
+    name: Jonas Plum
+    email: git@jonasplum.de
+  homepage: "https://github.com/forensicanalysis/recursivefs"
+  description: "A recursive file system viewer."
+  license: MIT
+nfpms:
+  - replacements:
+      darwin: macOS
+      linux: Linux
+    homepage: "https://github.com/forensicanalysis/recursivefs"
+    maintainer: Jonas Plum <git@jonasplum.de>
+    description: "A recursive file system viewer."
+    license: MIT
+    formats:
+      - apk
+      - deb
+      - rpm
