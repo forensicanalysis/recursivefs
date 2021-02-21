@@ -191,28 +191,28 @@ func Test_tree(t *testing.T) {
 		{"tree", args{"container/zip.zip"}, []byte(`../../../testdata/data/container/zip.zip
 ├── README.md
 ├── container
-│   ├── Computer forensics - Wikipedia.7z
-│   ├── Computer forensics - Wikipedia.pdf.gz
-│   ├── Computer forensics - Wikipedia.tar
-│   │   └── Computer forensics - Wikipedia.pdf
-│   └── Computer forensics - Wikipedia.zip
-│       └── Computer forensics - Wikipedia.pdf
+│   ├── Computer forensics - Wikipedia.7z
+│   ├── Computer forensics - Wikipedia.pdf.gz
+│   ├── Computer forensics - Wikipedia.tar
+│   │   └── Computer forensics - Wikipedia.pdf
+│   └── Computer forensics - Wikipedia.zip
+│       └── Computer forensics - Wikipedia.pdf
 ├── document
-│   ├── Computer forensics - Wikipedia.pdf
-│   ├── Design_of_the_FAT_file_system.xlsx
-│   │   └── [Content_Types].xml
-│   ├── Digital forensics.docx
-│   │   └── [Content_Types].xml
-│   ├── Digital forensics.txt
-│   └── NTFS.pptx
-│       └── [Content_Types].xml
+│   ├── Computer forensics - Wikipedia.pdf
+│   ├── Design_of_the_FAT_file_system.xlsx
+│   │   └── [Content_Types].xml
+│   ├── Digital forensics.docx
+│   │   └── [Content_Types].xml
+│   ├── Digital forensics.txt
+│   └── NTFS.pptx
+│       └── [Content_Types].xml
 ├── evidence.json
 ├── folder
-│   ├── file.txt
-│   └── subfolder
-│       ├── subfile.txt
-│       └── subsubfolder
-│           └── subsubfile.txt
+│   ├── file.txt
+│   └── subfolder
+│       ├── subfile.txt
+│       └── subsubfolder
+│           └── subsubfile.txt
 └── image
     ├── alps.jpg
     ├── alps.png
