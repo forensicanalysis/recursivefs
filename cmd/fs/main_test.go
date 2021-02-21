@@ -20,16 +20,20 @@
 //
 // Author(s): Jonas Plum
 
-package subcommands
+package main_test
 
 import (
 	"bytes"
+	"github.com/forensicanalysis/fslib"
 	"io"
 	"io/ioutil"
 	"os"
 	"reflect"
 	"regexp"
 	"testing"
+
+	"github.com/forensicanalysis/fscmd"
+	"github.com/forensicanalysis/recursivefs"
 )
 
 func stdout(f func()) []byte {
@@ -55,7 +59,7 @@ func stdout(f func()) []byte {
 }
 
 func Test_cat(t *testing.T) {
-	b, _ := ioutil.ReadFile("../../../testdata/data/document/Digital forensics.txt")
+	b, _ := ioutil.ReadFile("../../testdata/data/document/Digital forensics.txt")
 
 	type args struct {
 		url string
@@ -70,7 +74,7 @@ func Test_cat(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { catCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.CatCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 
 			re := regexp.MustCompile(`\r?\n`) // TODO: improve newline handling
 			gotDataString := re.ReplaceAllString(string(gotData), "")
@@ -101,7 +105,7 @@ func Test_ls(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { lsCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.LsCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
 				t.Errorf("ls() = %s, want %s", gotData, tt.wantData)
 				t.Errorf("ls() = %x, want %x", gotData, tt.wantData)
@@ -119,11 +123,11 @@ func Test_file(t *testing.T) {
 		args     args
 		wantData []byte
 	}{
-		{"file", args{"container/zip.zip"}, []byte("../../../testdata/data/container/zip.zip: application/zip\n")},
+		{"file", args{"container/zip.zip"}, []byte("../../testdata/data/container/zip.zip: application/zip\n")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { fileCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.FileCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
 				t.Errorf("file() = %s, want %s", gotData, tt.wantData)
 			}
@@ -144,7 +148,7 @@ func Test_hashsum(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { hashsumCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.HashsumCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
 				t.Errorf("hashsum() = %s, want %s", gotData, tt.wantData)
 			}
@@ -171,7 +175,7 @@ Modified: 2018-03-31 19:48:36 +0000 UTC
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { statCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.StatCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
 				// t.Errorf("stat() = '%s', want '%s'", gotData, tt.wantData) // TODO https://github.com/golang/go/issues/43872
 			}
@@ -188,7 +192,7 @@ func Test_tree(t *testing.T) {
 		args     args
 		wantData []byte
 	}{
-		{"tree", args{"container/zip.zip"}, []byte(`../../../testdata/data/container/zip.zip
+		{"tree", args{"container/zip.zip"}, []byte(`../../testdata/data/container/zip.zip
 ├── README.md
 ├── container
 │   ├── Computer forensics - Wikipedia.7z
@@ -217,47 +221,14 @@ func Test_tree(t *testing.T) {
     ├── alps.jpg
     ├── alps.png
     └── alps.tiff
-
 `)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotData := stdout(func() { treeCmd(nil, []string{"../../../testdata/data/" + tt.args.url}) })
+			gotData := stdout(func() { fscmd.TreeCmd(recursivefs.New(), fslib.ToFSPath)(nil, []string{"../../testdata/data/" + tt.args.url}) })
 			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
 				t.Errorf("tree() = '%s', want '%s'", gotData, tt.wantData)
 				t.Errorf("tree() = '%x', want '%x'", gotData, tt.wantData)
-			}
-		})
-	}
-}
-
-// func Test_executeCommands(t *testing.T) {
-// 	tests := []struct {
-// 		name    string
-// 		wantErr bool
-// 	}{
-// 		{"Execute", false},
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			if err := executeCommands(); (err != nil) != tt.wantErr {
-// 				t.Errorf("executeCommands() error = %v, wantErr %v", err, tt.wantErr)
-// 			}
-// 		})
-// 	}
-// }
-
-func Test_executeCommands(t *testing.T) {
-	tests := []struct {
-		name    string
-		wantErr bool
-	}{
-		{"exec", false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := executeCommands(); (err != nil) != tt.wantErr {
-				t.Errorf("executeCommands() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

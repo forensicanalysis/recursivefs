@@ -27,9 +27,10 @@ package recursivefs
 
 import (
 	"fmt"
+	"io/fs"
+
 	"github.com/forensicanalysis/fslib/bufferfs"
 	"github.com/forensicanalysis/fslib/osfs"
-	"io/fs"
 )
 
 type element struct {
