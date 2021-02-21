@@ -1,7 +1,6 @@
 <h1 align="center">recursive fs</h1>
 
 <p  align="center">
- <a href="https://codecov.io/gh/forensicanalysis/recursivefs"><img src="https://codecov.io/gh/forensicanalysis/recursivefs/branch/master/graph/badge.svg" alt="coverage" /></a>
  <a href="https://godocs.io/github.com/forensicanalysis/recursivefs"><img src="https://godocs.io/github.com/forensicanalysis/recursivefs?status.svg" alt="doc" /></a>
 </p>
 
