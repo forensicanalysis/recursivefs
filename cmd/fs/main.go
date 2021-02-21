@@ -38,8 +38,21 @@
 //     fs hashsum case/evidence.zip/*
 package main
 
-import "github.com/forensicanalysis/recursivefs/cmd/fs/subcommands"
+import (
+	"log"
+
+	"github.com/forensicanalysis/fscmd"
+	"github.com/forensicanalysis/fslib"
+	"github.com/forensicanalysis/recursivefs"
+)
 
 func main() {
-	subcommands.Execute()
+	fsys := recursivefs.New()
+	fsCmd := fscmd.FSCommand(fsys, fslib.ToFSPath)
+	fsCmd.Use = "fs"
+	fsCmd.Short = "recursive file, filesystem and archive commands"
+	err := fsCmd.Execute()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

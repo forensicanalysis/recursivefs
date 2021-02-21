@@ -23,11 +23,12 @@
 package recursivefs
 
 import (
-	"github.com/forensicanalysis/fslib"
 	"io"
 	"io/fs"
 	"path"
 	"sort"
+
+	"github.com/forensicanalysis/fslib"
 )
 
 // Item describes files and directories in the file system.

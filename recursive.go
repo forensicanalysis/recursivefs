@@ -30,6 +30,9 @@ import (
 	"path"
 	"strings"
 
+	"github.com/nlepage/go-tarfs"
+
+	"github.com/forensicanalysis/filetype"
 	"github.com/forensicanalysis/fslib/bufferfs"
 	"github.com/forensicanalysis/fslib/fat16"
 	"github.com/forensicanalysis/fslib/fsio"
@@ -37,9 +40,7 @@ import (
 	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/ntfs"
 	"github.com/forensicanalysis/goaff4"
-	"github.com/forensicanalysis/recursivefs/filetype"
 	"github.com/forensicanalysis/zipfs"
-	"github.com/nlepage/go-tarfs"
 )
 
 func parseRealPath(fsys fs.FS, sample string) (rpath []element, err error) {

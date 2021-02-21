@@ -7,7 +7,7 @@
 A recursive file system that processes container files according to their file type. 
 You can use it e.g. to read a pdf from a zip file on an NTFS disk image (s. below). 
 It also provides the `fs` command line tool do use the functionality from the command line.
-recursivefs implements [io/fs.FS](https://tip.golang.org/pkg/io/fs).
+recursivefs implements [io/fs.FS](https://golang.org/pkg/io/fs).
 
 
 ## Example
