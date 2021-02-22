@@ -24,9 +24,6 @@ package main_test
 
 import (
 	"bytes"
-	"github.com/forensicanalysis/fslib"
-	"github.com/forensicanalysis/recursivefs"
-	"github.com/spf13/cobra"
 	"io"
 	"io/fs"
 	"io/ioutil"
@@ -35,7 +32,11 @@ import (
 	"regexp"
 	"testing"
 
+	"github.com/spf13/cobra"
+
 	"github.com/forensicanalysis/fscmd"
+	"github.com/forensicanalysis/fslib"
+	"github.com/forensicanalysis/recursivefs"
 )
 
 func stdout(f func()) []byte {
@@ -125,12 +126,13 @@ func Test_file(t *testing.T) {
 		args     args
 		wantData []byte
 	}{
-		{"file", args{"container/zip.zip"}, []byte("../../testdata/data/container/zip.zip: application/zip\n")},
+		{"file", args{"container/zip.zip"}, []byte(": application/zip\n")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			name, _ := fslib.ToFSPath("../../testdata/data/" + tt.args.url)
 			gotData := stdout(func() { fscmd.FileCmd(testParse)(nil, []string{"../../testdata/data/" + tt.args.url}) })
-			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
+			if !reflect.DeepEqual(string(gotData), name+string(tt.wantData)) {
 				t.Errorf("file() = %s, want %s", gotData, tt.wantData)
 			}
 		})
@@ -194,7 +196,7 @@ func Test_tree(t *testing.T) {
 		args     args
 		wantData []byte
 	}{
-		{"tree", args{"container/zip.zip"}, []byte(`../../testdata/data/container/zip.zip
+		{"tree", args{"container/zip.zip"}, []byte(`
 ├── README.md
 ├── container
 │   ├── Computer forensics - Wikipedia.7z
@@ -227,8 +229,9 @@ func Test_tree(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			name, _ := fslib.ToFSPath("../../testdata/data/" + tt.args.url)
 			gotData := stdout(func() { fscmd.TreeCmd(testParse)(nil, []string{"../../testdata/data/" + tt.args.url}) })
-			if !reflect.DeepEqual(string(gotData), string(tt.wantData)) {
+			if !reflect.DeepEqual(string(gotData), name + string(tt.wantData)) {
 				t.Errorf("tree() = '%s', want '%s'", gotData, tt.wantData)
 				t.Errorf("tree() = '%x', want '%x'", gotData, tt.wantData)
 			}
