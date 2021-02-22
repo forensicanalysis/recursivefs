@@ -9,4 +9,7 @@ require (
 	github.com/forensicanalysis/goaff4 v0.3.0
 	github.com/forensicanalysis/zipfs v0.0.0-20210221135809-348f5c2dff80
 	github.com/nlepage/go-tarfs v1.0.4
+	github.com/spf13/cobra v1.1.3
 )
+
+replace github.com/forensicanalysis/fscmd => ../fscmd
