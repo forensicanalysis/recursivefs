@@ -39,7 +39,10 @@
 package main
 
 import (
+	"io/fs"
 	"log"
+
+	"github.com/spf13/cobra"
 
 	"github.com/forensicanalysis/fscmd"
 	"github.com/forensicanalysis/fslib"
@@ -48,7 +51,17 @@ import (
 
 func main() {
 	fsys := recursivefs.New()
-	fsCmd := fscmd.FSCommand(fsys, fslib.ToFSPath)
+	fsCmd := fscmd.FSCommand(func(_ *cobra.Command, args []string) (fs.FS, []string, error) {
+		var names []string
+		for _, arg := range args {
+			name, err := fslib.ToFSPath(arg)
+			if err != nil {
+				return nil, nil, err
+			}
+			names = append(names, name)
+		}
+		return fsys, names, nil
+	})
 	fsCmd.Use = "fs"
 	fsCmd.Short = "recursive file, filesystem and archive commands"
 	err := fsCmd.Execute()

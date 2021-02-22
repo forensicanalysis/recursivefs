@@ -47,8 +47,8 @@ github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/forensicanalysis/filetype v0.1.0 h1:atOqOBAbA/SVyDQ1vmnbCGyO4R0uGgEZf6MFSvK6VCw=
 github.com/forensicanalysis/filetype v0.1.0/go.mod h1:TvJVXsX+FtQmvj+7HnfgShad6A14DgiByy39V0dKeC4=
-github.com/forensicanalysis/fscmd v0.1.0 h1:FZqBIy2KfaaAEtYdSKtbyV3K04mXm6eR+kiZdaxUMQo=
-github.com/forensicanalysis/fscmd v0.1.0/go.mod h1:vymoirTmQ9il20maL3olLXU+TJ4buy1SXTJfGOXJlG0=
+github.com/forensicanalysis/fscmd v0.2.0 h1:g0nbL2i3y82qKdFJrnY5y5nOGnvxWQqN/RD9I7+ZN8w=
+github.com/forensicanalysis/fscmd v0.2.0/go.mod h1:vymoirTmQ9il20maL3olLXU+TJ4buy1SXTJfGOXJlG0=
 github.com/forensicanalysis/fslib v0.15.0 h1:S0yvtljgeyZSbUYtZOb5nG6G+K29EUa4yfdcqTpiwsM=
 github.com/forensicanalysis/fslib v0.15.0/go.mod h1:Ih/gIc8wQEOGCV6nEGOThSCA2yPCQ7y3McOIM6zoSYE=
 github.com/forensicanalysis/goaff4 v0.3.0 h1:/ri4UYi3FVgkUhu8ZLIFDW4Sh6oc1Kr8eEI0Xn9C9C4=
