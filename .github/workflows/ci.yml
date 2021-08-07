@@ -38,7 +38,7 @@ jobs:
         if: matrix.os == 'windows-latest'
 
       - name: Test
-        run: go test -coverpkg=./... -coverprofile=coverage.txt -covermode=atomic ./...
+        run: go test -coverprofile=coverage.txt ./...
       - name: Upload coverage
         uses: codecov/codecov-action@v2
         with:
