@@ -208,12 +208,98 @@ func Test_tree(t *testing.T) {
 ├── document
 │   ├── Computer forensics - Wikipedia.pdf
 │   ├── Design_of_the_FAT_file_system.xlsx
-│   │   └── [Content_Types].xml
+│   │   ├── [Content_Types].xml
+│   │   ├── _rels
+│   │   │   └── .rels
+│   │   ├── docProps
+│   │   │   ├── app.xml
+│   │   │   └── core.xml
+│   │   └── xl
+│   │       ├── _rels
+│   │       │   └── workbook.xml.rels
+│   │       ├── printerSettings
+│   │       │   └── printerSettings1.bin
+│   │       ├── sharedStrings.xml
+│   │       ├── styles.xml
+│   │       ├── theme
+│   │       │   └── theme1.xml
+│   │       ├── workbook.xml
+│   │       └── worksheets
+│   │           ├── _rels
+│   │           │   └── sheet1.xml.rels
+│   │           └── sheet1.xml
 │   ├── Digital forensics.docx
-│   │   └── [Content_Types].xml
+│   │   ├── [Content_Types].xml
+│   │   ├── _rels
+│   │   │   └── .rels
+│   │   ├── docProps
+│   │   │   ├── app.xml
+│   │   │   └── core.xml
+│   │   └── word
+│   │       ├── _rels
+│   │       │   └── document.xml.rels
+│   │       ├── document.xml
+│   │       ├── fontTable.xml
+│   │       ├── media
+│   │       │   └── image1.jpeg
+│   │       ├── numbering.xml
+│   │       ├── settings.xml
+│   │       ├── styles.xml
+│   │       ├── theme
+│   │       │   └── theme1.xml
+│   │       └── webSettings.xml
 │   ├── Digital forensics.txt
 │   └── NTFS.pptx
-│       └── [Content_Types].xml
+│       ├── [Content_Types].xml
+│       ├── _rels
+│       │   └── .rels
+│       ├── docProps
+│       │   ├── app.xml
+│       │   ├── core.xml
+│       │   └── thumbnail.jpeg
+│       └── ppt
+│           ├── _rels
+│           │   └── presentation.xml.rels
+│           ├── presProps.xml
+│           ├── presentation.xml
+│           ├── slideLayouts
+│           │   ├── _rels
+│           │   │   ├── slideLayout1.xml.rels
+│           │   │   ├── slideLayout10.xml.rels
+│           │   │   ├── slideLayout11.xml.rels
+│           │   │   ├── slideLayout2.xml.rels
+│           │   │   ├── slideLayout3.xml.rels
+│           │   │   ├── slideLayout4.xml.rels
+│           │   │   ├── slideLayout5.xml.rels
+│           │   │   ├── slideLayout6.xml.rels
+│           │   │   ├── slideLayout7.xml.rels
+│           │   │   ├── slideLayout8.xml.rels
+│           │   │   └── slideLayout9.xml.rels
+│           │   ├── slideLayout1.xml
+│           │   ├── slideLayout10.xml
+│           │   ├── slideLayout11.xml
+│           │   ├── slideLayout2.xml
+│           │   ├── slideLayout3.xml
+│           │   ├── slideLayout4.xml
+│           │   ├── slideLayout5.xml
+│           │   ├── slideLayout6.xml
+│           │   ├── slideLayout7.xml
+│           │   ├── slideLayout8.xml
+│           │   └── slideLayout9.xml
+│           ├── slideMasters
+│           │   ├── _rels
+│           │   │   └── slideMaster1.xml.rels
+│           │   └── slideMaster1.xml
+│           ├── slides
+│           │   ├── _rels
+│           │   │   ├── slide1.xml.rels
+│           │   │   └── slide2.xml.rels
+│           │   ├── slide1.xml
+│           │   └── slide2.xml
+│           ├── tableStyles.xml
+│           ├── theme
+│           │   └── theme1.xml
+│           └── viewProps.xml
 ├── evidence.json
 ├── folder
 │   ├── file.txt

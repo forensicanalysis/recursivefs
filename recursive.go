@@ -23,6 +23,7 @@
 package recursivefs
 
 import (
+	"archive/zip"
 	"errors"
 	"io"
 	"io/fs"
@@ -40,7 +41,6 @@ import (
 	"github.com/forensicanalysis/fslib/mbr"
 	"github.com/forensicanalysis/fslib/ntfs"
 	"github.com/forensicanalysis/goaff4"
-	"github.com/forensicanalysis/zipfs"
 )
 
 func parseRealPath(fsys fs.FS, sample string) (rpath []element, err error) {
@@ -95,7 +95,12 @@ func childFS(r io.Reader, name string) (fs.FS, error) { // nolint: gocyclo
 	var fsys fs.FS
 	switch t {
 	case filetype.Zip, filetype.Xlsx, filetype.Pptx, filetype.Docx:
-		fsys, err = zipfs.New(readSeekerAt)
+		var size int64
+		size, err = fsio.GetSize(readSeekerAt)
+		if err != nil {
+			return nil, err
+		}
+		fsys, err = zip.NewReader(readSeekerAt, size)
 	case filetype.Tar:
 		fsys, err = tarfs.New(readSeekerAt)
 	case filetype.FAT16:
