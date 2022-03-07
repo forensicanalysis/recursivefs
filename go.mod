@@ -7,6 +7,6 @@ require (
 	github.com/forensicanalysis/fscmd v0.2.0
 	github.com/forensicanalysis/fslib v0.15.1
 	github.com/forensicanalysis/goaff4 v0.3.0
-	github.com/nlepage/go-tarfs v1.0.5
+	github.com/nlepage/go-tarfs v1.0.6
 	github.com/spf13/cobra v1.2.1
 )
