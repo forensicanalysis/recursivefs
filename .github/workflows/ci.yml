@@ -15,10 +15,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: Setup go 1.16
+      - name: Setup go 1.18
         uses: actions/setup-go@v3
         with:
-          go-version: 1.16.0
+          go-version: 1.18
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Download dependencies
@@ -53,10 +53,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
-      - name: Setup go 1.16
+      - name: Setup go 1.18
         uses: actions/setup-go@v3
         with:
-          go-version: 1.16.0
+          go-version: 1.18
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Download dependencies
