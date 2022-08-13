@@ -22,20 +22,24 @@
 
 // Package fs implements the fs command line tool that has various subcommands
 // which imitate unix commands but for nested file system structures.
-//     cat      Print files
-//     file     Determine files types
-//     hashsum  Print hashsums
-//     ls       List directory contents
-//     stat     Display file status
-//     strings  Find the printable strings in an object, or other binary, file
-//     tree     List contents of directories in a tree-like format
 //
-// Usage Examples
+//	cat      Print files
+//	file     Determine files types
+//	hashsum  Print hashsums
+//	ls       List directory contents
+//	stat     Display file status
+//	strings  Find the printable strings in an object, or other binary, file
+//	tree     List contents of directories in a tree-like format
+//
+// # Usage Examples
 //
 // Extract the Amcache.hve file from a NTFS image in a zip file:
-//     fs cat case/evidence.zip/ntfs.dd/Windows/AppCompat/Programs/Amcache.hve > Amcache.hve
+//
+//	fs cat case/evidence.zip/ntfs.dd/Windows/AppCompat/Programs/Amcache.hve > Amcache.hve
+//
 // Hash all files in a zip file:
-//     fs hashsum case/evidence.zip/*
+//
+//	fs hashsum case/evidence.zip/*
 package main
 
 import (
