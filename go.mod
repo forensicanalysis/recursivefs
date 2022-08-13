@@ -1,6 +1,6 @@
 module github.com/forensicanalysis/recursivefs
 
-go 1.16
+go 1.19
 
 require (
 	github.com/forensicanalysis/filetype v0.1.0
